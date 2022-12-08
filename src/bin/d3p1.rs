@@ -1,7 +1,7 @@
-fn main() -> std::io::Result<()> {
+fn main() {
     let mut sum: u32 = 0;
     for line in std::io::stdin().lines() {
-        let line = line?;
+        let line = line.unwrap();
         let compartment = line.chars().count() / 2;
         let seen: std::collections::HashSet<char> = line.chars().take(compartment).collect();
         let shared = line.chars().skip(compartment).find(|c| seen.contains(c)).unwrap();
@@ -13,5 +13,4 @@ fn main() -> std::io::Result<()> {
         sum += priority;
     }
     println!("{}", sum);
-    Ok(())
 }

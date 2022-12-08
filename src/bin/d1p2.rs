@@ -1,10 +1,10 @@
-fn main() -> std::io::Result<()> {
+fn main() {
     let mut current: u32 = 0;
     let mut first: u32 = 0;
     let mut second: u32 = 0;
     let mut third: u32 = 0;
     for line in std::io::stdin().lines() {
-        let line = line?;
+        let line = line.unwrap();
         match line.parse::<u32>() {
             Ok(x) => current += x,
             Err(_) => {
@@ -23,5 +23,4 @@ fn main() -> std::io::Result<()> {
         }
     }
     println!("{}", first + second + third);
-    Ok(())
 }

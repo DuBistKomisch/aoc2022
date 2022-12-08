@@ -29,21 +29,21 @@ fn rps_beaten_by(rps: &RPS) -> RPS {
     }
 }
 
-fn main() -> std::io::Result<()> {
+fn main() {
     let mut score: u32 = 0;
     for line in std::io::stdin().lines() {
-        let line = line?;
+        let line = line.unwrap();
         let theirs = match &line[0..1] {
             "A" => RPS::Rock,
             "B" => RPS::Paper,
             "C" => RPS::Scissors,
-            _ => return Err(std::io::Error::from(std::io::ErrorKind::Other))
+            _ => panic!("invalid theirs")
         };
         let ours = match &line[2..3] {
             "X" => rps_beats(&theirs),
             "Y" => theirs,
             "Z" => rps_beaten_by(&theirs),
-            _ => return Err(std::io::Error::from(std::io::ErrorKind::Other))
+            _ => panic!("invalid ours")
         };
         score += rps_value(&ours);
         if theirs == ours {
@@ -53,6 +53,5 @@ fn main() -> std::io::Result<()> {
             score += 6;
         }
     }
-    print!("{}", score);
-    Ok(())
+    println!("{}", score);
 }

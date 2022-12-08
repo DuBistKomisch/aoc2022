@@ -1,8 +1,8 @@
-fn main() -> std::io::Result<()> {
+fn main() {
     let mut stacks: Vec<Vec<char>> = vec![vec![]; 9];
     let mut lines = std::io::stdin().lines();
     'crates: while let Some(line) = lines.next() {
-        for (i, c) in line?.chars().skip(1).step_by(4).enumerate() {
+        for (i, c) in line.unwrap().chars().skip(1).step_by(4).enumerate() {
             if c.is_numeric() {
                 break 'crates;
             }
@@ -14,7 +14,7 @@ fn main() -> std::io::Result<()> {
     }
     lines.next();
     for line in lines {
-        let parts: Vec<usize> = line?.split(' ').filter_map(|n| n.parse().ok()).collect();
+        let parts: Vec<usize> = line.unwrap().split(' ').filter_map(|n| n.parse().ok()).collect();
         if let [n, from, to] = &parts[..] {
             let at = stacks[*from - 1].len() - n;
             let mut moved = stacks[*from - 1].split_off(at);
@@ -23,5 +23,4 @@ fn main() -> std::io::Result<()> {
     }
     let answer: String = stacks.iter().filter_map(|stack| stack.last()).collect();
     println!("{}", answer);
-    Ok(())
 }

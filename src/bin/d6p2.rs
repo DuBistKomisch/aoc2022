@@ -1,7 +1,7 @@
-fn main() -> std::io::Result<()> {
+fn main() {
     let mut lines = std::io::stdin().lines();
     if let Some(line) = lines.next() {
-        let chars: Vec<char> = line?.chars().collect();
+        let chars: Vec<char> = line.unwrap().chars().collect();
         let offset = 14 + chars.windows(14).position(|quad| {
             let mut vec = quad.to_vec();
             vec.sort();
@@ -10,5 +10,4 @@ fn main() -> std::io::Result<()> {
         }).unwrap();
         println!("{}", offset);
     }
-    Ok(())
 }

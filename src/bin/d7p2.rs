@@ -1,19 +1,21 @@
+use std::collections::HashMap;
+
 #[derive(Debug)]
 struct Dir {
-    files: std::collections::HashMap<String, u32>,
-    subdirs: std::collections::HashMap<String, Box<Dir>>
+    files: HashMap<String, u32>,
+    subdirs: HashMap<String, Dir>
 }
 
 impl Dir {
     fn new() -> Self {
         Self {
-            files: std::collections::HashMap::new(),
-            subdirs: std::collections::HashMap::new()
+            files: HashMap::new(),
+            subdirs: HashMap::new()
         }
     }
 }
 
-fn main() -> std::io::Result<()> {
+fn main() {
     let mut root_dir = Dir::new();
     let mut breadcrumbs: Vec<String> = Vec::new();
     for line in std::io::stdin().lines() {
@@ -21,30 +23,26 @@ fn main() -> std::io::Result<()> {
         for breadcrumb in &breadcrumbs {
             cur_dir = &mut *cur_dir.subdirs.get_mut(breadcrumb).unwrap();
         }
-        let line = line?;
+        let line = line.unwrap();
         let parts: Vec<&str> = line.split(' ').collect();
-        match parts[0] {
-            "$" => {
-                if parts[1] == "cd" {
-                    if parts[2] == "/" {
-                        breadcrumbs.truncate(1);
-                    } else if parts[2] == ".." {
-                        breadcrumbs.pop();
-                    } else {
-                        breadcrumbs.push(parts[2].to_string());
-                    }
+        match &parts[..] {
+            ["$", "cd", "/"] => breadcrumbs.truncate(1),
+            ["$", "cd", ".."] => drop(breadcrumbs.pop()),
+            ["$", "cd", subdir] => breadcrumbs.push(subdir.to_string()),
+            ["$", ..] => (),
+            ["dir", dir] => {
+                let dir = dir.to_string();
+                if !cur_dir.subdirs.contains_key(&dir) {
+                    cur_dir.subdirs.insert(dir, Dir::new());
                 }
             },
-            "dir" => {
-                if !cur_dir.subdirs.contains_key(parts[1]) {
-                    cur_dir.subdirs.insert(parts[1].to_string(), Box::new(Dir::new()));
+            [size, file] => {
+                let file = file.to_string();
+                if !cur_dir.files.contains_key(&file) {
+                    cur_dir.files.insert(file, size.parse().unwrap());
                 }
             },
-            _ => {
-                if !cur_dir.files.contains_key(parts[1]) {
-                    cur_dir.files.insert(parts[1].to_string(), parts[0].parse().unwrap());
-                }
-            }
+            [..] => ()
         }
     }
     let used = dir_dfs_size(&root_dir);
@@ -52,7 +50,6 @@ fn main() -> std::io::Result<()> {
     let mut answer = 0;
     dir_dfs_answer(&mut answer, needed, &root_dir);
     println!("{}", answer);
-    Ok(())
 }
 
 fn dir_dfs_size(dir: &Dir) -> u32 {
