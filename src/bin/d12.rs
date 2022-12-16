@@ -1,9 +1,12 @@
 #![feature(let_chains)]
 
-use std::collections::{BinaryHeap, HashMap};
+use aoc::{main, sample};
 use std::cmp::Ordering;
+use std::collections::{VecDeque, HashMap};
 
-#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+main!(d12, "Hill Climbing Algorithm");
+
+#[derive(Clone, Eq, Hash, PartialEq)]
 struct Node {
     x: usize,
     y: usize
@@ -43,7 +46,7 @@ impl Node {
     }
 }
 
-#[derive(Debug, Eq)]
+#[derive(Eq)]
 struct Candidate {
     distance: u32,
     node: Node
@@ -67,9 +70,9 @@ impl PartialEq for Candidate {
     }
 }
 
-fn main() {
-    let input: Vec<Vec<char>> = std::io::stdin().lines()
-        .map(|line| line.unwrap().chars().collect())
+fn d12(input: &str) -> (u32, u32) {
+    let input: Vec<Vec<char>> = input.lines()
+        .map(|line| line.chars().collect())
         .collect();
     let mut heights: HashMap<Node, i32> = HashMap::new();
     let mut start = Node { x: 0, y: 0 };
@@ -90,33 +93,61 @@ fn main() {
             }
         }
     }
+    (
+        bfs(
+            input[0].len(),
+            input.len(),
+            start.clone(),
+            |node| *node == end,
+            |from, to| heights.get(to).unwrap() - heights.get(from).unwrap() <= 1
+        ),
+        bfs(
+            input[0].len(),
+            input.len(),
+            end.clone(),
+            |node| *heights.get(node).unwrap() == 0,
+            |from, to| heights.get(to).unwrap() - heights.get(from).unwrap() >= -1
+        )
+    )
+}
+
+fn bfs<F, E>(width: usize, height: usize, start: Node, finish: F, edge: E) -> u32
+where
+    F: Fn(&Node) -> bool,
+    E: Fn(&Node, &Node) -> bool
+{
     let mut distances: HashMap<Node, u32> = HashMap::new();
-    let mut heap = BinaryHeap::new();
-    heap.push(Candidate { distance: 0, node: start });
-    while let Some(candidate) = heap.pop() {
+    let mut queue = VecDeque::new();
+    queue.push_back(Candidate { distance: 0, node: start });
+    while let Some(candidate) = queue.pop_front() {
         if distances.contains_key(&candidate.node) {
             continue;
         }
         distances.insert(candidate.node.clone(), candidate.distance);
-        if candidate.node == end {
-            println!("{}", candidate.distance);
-            break;
+        if finish(&candidate.node) {
+            return candidate.distance;
         }
-        if let Some(node) = candidate.node.left() && !distances.contains_key(&node) && height_diff(&heights, &candidate.node, &node) <= 1 {
-            heap.push(Candidate { distance: candidate.distance + 1, node });
+        let distance = candidate.distance + 1;
+        if let Some(node) = candidate.node.left() && !distances.contains_key(&node) && edge(&candidate.node, &node) {
+            queue.push_back(Candidate { distance, node });
         }
-        if let Some(node) = candidate.node.right(input[0].len()) && !distances.contains_key(&node) && height_diff(&heights, &candidate.node, &node) <= 1 {
-            heap.push(Candidate { distance: candidate.distance + 1, node });
+        if let Some(node) = candidate.node.right(width) && !distances.contains_key(&node) && edge(&candidate.node, &node) {
+            queue.push_back(Candidate { distance, node });
         }
-        if let Some(node) = candidate.node.up() && !distances.contains_key(&node) && height_diff(&heights, &candidate.node, &node) <= 1 {
-            heap.push(Candidate { distance: candidate.distance + 1, node });
+        if let Some(node) = candidate.node.up() && !distances.contains_key(&node) && edge(&candidate.node, &node) {
+            queue.push_back(Candidate { distance, node });
         }
-        if let Some(node) = candidate.node.down(input.len()) && !distances.contains_key(&node) && height_diff(&heights, &candidate.node, &node) <= 1 {
-            heap.push(Candidate { distance: candidate.distance + 1, node });
+        if let Some(node) = candidate.node.down(height) && !distances.contains_key(&node) && edge(&candidate.node, &node) {
+            queue.push_back(Candidate { distance, node });
         }
     }
+    unreachable!()
 }
 
-fn height_diff(heights: &HashMap<Node, i32>, a: &Node, b: &Node) -> i32 {
-    heights.get(b).unwrap() - heights.get(a).unwrap()
-}
+sample!(d12, 31, 29, "\
+Sabqponm
+abcryxxl
+accszExk
+acctuvwj
+abdefghi
+");

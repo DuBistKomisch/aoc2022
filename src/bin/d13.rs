@@ -1,8 +1,11 @@
-#![feature(iter_next_chunk)]
+#![feature(array_chunks)]
 
+use aoc::{main, sample};
 use std::cmp::Ordering;
 
-#[derive(Debug, Eq)]
+main!(d13, "Distress Signal");
+
+#[derive(Clone, Eq)]
 enum Packet {
     List(Vec<Packet>),
     Integer(u32)
@@ -56,18 +59,49 @@ impl PartialEq for Packet {
     }
 }
 
-fn main() {
-    let mut lines = std::io::stdin().lines();
-    let mut index = 1;
-    let mut answer = 0;
-    while let Ok([left, right]) = lines.next_chunk() {
-        let left = Packet::parse(&left.unwrap());
-        let right = Packet::parse(&right.unwrap());
-        if left < right {
-            answer += index;
-        }
-        lines.next();
-        index += 1;
+fn d13(input: &str) -> (usize, usize) {
+    let mut packets: Vec<Packet> = input.lines()
+        .filter_map(|line| (!line.is_empty()).then(|| Packet::parse(&line)))
+        .collect();
+
+    let part1 = packets.array_chunks().enumerate()
+        .filter_map(|(i, [left, right])| (left < right).then_some(i + 1))
+        .sum();
+
+    let dividers = [Packet::parse("[[2]]"), Packet::parse("[[6]]")];
+    for divider in dividers.iter() {
+        packets.push(divider.clone());
     }
-    println!("{}", answer);
+    packets.sort();
+    let part2 = dividers.iter()
+        .filter_map(|divider| packets.iter().position(|packet| packet == divider).map(|i| i + 1))
+        .product();
+
+    (part1, part2)
 }
+
+sample!(d13, 13, 140, "\
+[1,1,3,1,1]
+[1,1,5,1,1]
+
+[[1],[2,3,4]]
+[[1],4]
+
+[9]
+[[8,7,6]]
+
+[[4,4],4,4]
+[[4,4],4,4,4]
+
+[7,7,7,7]
+[7,7,7]
+
+[]
+[3]
+
+[[[]]]
+[[]]
+
+[1,[2,[3,[4,[5,6,7]]]],8,9]
+[1,[2,[3,[4,[5,6,0]]]],8,9]
+");

@@ -1,22 +1,28 @@
-#![feature(array_windows)]
+#![feature(iter_next_chunk)]
 
+use aoc::{main, sample};
 use std::collections::HashSet;
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+main!(d09, "Rope Bridge");
+
+#[derive(Clone, Copy, Eq, Hash, PartialEq)]
 struct Point {
     x: i32,
     y: i32
 }
 
-fn main() {
-    let mut knots = vec![Point { x: 0, y: 0 }; 10];
+fn d09(input: &str) -> (usize, usize) {
+    (solve(input, 2), solve(input, 10))
+}
+
+fn solve(input: &str, knots: usize) -> usize {
+    let mut knots = vec![Point { x: 0, y: 0 }; knots];
     let mut seen = HashSet::new();
-    for line in std::io::stdin().lines() {
-        let line = line.unwrap();
-        let [direction, times] = &line.split_whitespace().collect::<Vec<&str>>()[..] else { unreachable!() };
+    for line in input.lines() {
+        let [direction, times] = line.split_whitespace().next_chunk().unwrap();
         for _ in 0..times.parse().unwrap() {
             let mut head = &mut knots[0];
-            match *direction {
+            match direction {
                 "U" => head.y += 1,
                 "D" => head.y -= 1,
                 "L" => head.x -= 1,
@@ -39,8 +45,19 @@ fn main() {
                     tail.y += (head.y - tail.y).signum();
                 }
             }
-            seen.insert(knots.last().unwrap().clone());
+            seen.insert(knots[knots.len() - 1].clone());
         }
     }
-    println!("{}", seen.len());
+    seen.len()
 }
+
+sample!(d09, 13, 1, "\
+R 4
+U 4
+L 3
+D 1
+R 4
+D 1
+L 5
+R 2
+");
