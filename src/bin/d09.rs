@@ -45,7 +45,7 @@ fn solve(input: &str, knots: usize) -> usize {
                     tail.y += (head.y - tail.y).signum();
                 }
             }
-            seen.insert(knots[knots.len() - 1].clone());
+            seen.insert(knots[knots.len() - 1]);
         }
     }
     seen.len()

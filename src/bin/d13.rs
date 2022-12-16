@@ -17,13 +17,13 @@ impl Packet {
     }
 
     fn parse_recurse(text: &str) -> (Self, &str) {
-        if let Some(text) = text.strip_prefix("[") {
-            if let Some(text) = text.strip_prefix("]") {
+        if let Some(text) = text.strip_prefix('[') {
+            if let Some(text) = text.strip_prefix(']') {
                 (Self::List(vec![]), text)
             } else {
                 let (mut item, mut text) = Self::parse_recurse(text);
                 let mut items = vec![item];
-                while let Some(next) = text.strip_prefix(",") {
+                while let Some(next) = text.strip_prefix(',') {
                     (item, text) = Self::parse_recurse(next);
                     items.push(item);
                 }
@@ -61,7 +61,7 @@ impl PartialEq for Packet {
 
 fn d13(input: &str) -> (usize, usize) {
     let mut packets: Vec<Packet> = input.lines()
-        .filter_map(|line| (!line.is_empty()).then(|| Packet::parse(&line)))
+        .filter_map(|line| (!line.is_empty()).then(|| Packet::parse(line)))
         .collect();
 
     let part1 = packets.array_chunks().enumerate()

@@ -11,7 +11,7 @@ fn d05(input: &str) -> (String, String) {
 fn solve(input: &str, reverse: bool) -> String {
     let mut stacks: Vec<Vec<char>> = vec![vec![]; 9];
     let mut lines = input.lines();
-    'crates: while let Some(line) = lines.next() {
+    'crates: for line in lines.by_ref() {
         for (i, c) in line.chars().skip(1).step_by(4).enumerate() {
             if c.is_numeric() {
                 break 'crates;

@@ -55,7 +55,7 @@ fn d11(input: &str) -> (u64, u64) {
     let multiple: u64 = monkeys.iter().map(|monkey| monkey.div).product();
     (
         solve(monkeys.clone(), 20, |item| item / 3),
-        solve(monkeys.clone(), 10000, |item| item % multiple)
+        solve(monkeys, 10000, |item| item % multiple)
     )
 }
 

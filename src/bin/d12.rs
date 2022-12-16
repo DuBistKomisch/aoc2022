@@ -97,14 +97,14 @@ fn d12(input: &str) -> (u32, u32) {
         bfs(
             input[0].len(),
             input.len(),
-            start.clone(),
+            start,
             |node| *node == end,
             |from, to| heights.get(to).unwrap() - heights.get(from).unwrap() <= 1
         ),
         bfs(
             input[0].len(),
             input.len(),
-            end.clone(),
+            end,
             |node| *heights.get(node).unwrap() == 0,
             |from, to| heights.get(to).unwrap() - heights.get(from).unwrap() >= -1
         )

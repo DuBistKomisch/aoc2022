@@ -63,16 +63,10 @@ fn parse(input: &str) -> Dir {
             ["$", "cd", subdir] => breadcrumbs.push(subdir.to_string()),
             ["$", ..] => (),
             ["dir", dir] => {
-                let dir = dir.to_string();
-                if !pwd.subdirs.contains_key(&dir) {
-                    pwd.subdirs.insert(dir, Dir::new());
-                }
+                pwd.subdirs.entry(dir.to_string()).or_insert_with(Dir::new);
             },
             [size, file] => {
-                let file = file.to_string();
-                if !pwd.files.contains_key(&file) {
-                    pwd.files.insert(file, size.parse().unwrap());
-                }
+                pwd.files.entry(file.to_string()).or_insert_with(|| size.parse().unwrap());
             },
             _ => unreachable!()
         }
