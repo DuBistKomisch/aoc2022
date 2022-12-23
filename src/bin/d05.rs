@@ -37,8 +37,7 @@ fn solve(input: &str, reverse: bool) -> String {
     stacks.iter().filter_map(|stack| stack.last()).collect()
 }
 
-sample!(d05, "CMZ", "MCD", r"\
-    [D]    
+sample!(d05, "CMZ", "MCD", "    [D]    
 [N] [C]    
 [Z] [M] [P]
  1   2   3 

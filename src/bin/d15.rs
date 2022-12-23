@@ -2,7 +2,7 @@
 
 use aoc::{main, sample};
 
-main!(d15, "Beacon Exclusion Zone");
+main!(d15, "Beacon Exclusion Zone", 2_000_000);
 
 #[derive(Clone)]
 struct IntervalSet {
@@ -63,7 +63,7 @@ impl IntervalSet {
     }
 }
 
-fn d15(input: &str) -> (i64, i64) {
+fn d15(input: &str, threshold: i64) -> (i64, i64) {
     let data: Vec<[[i64; 2]; 2]> = input.lines().map(|line| line
             .strip_prefix("Sensor at ").unwrap()
             .split(": closest beacon is at ")
@@ -74,10 +74,6 @@ fn d15(input: &str) -> (i64, i64) {
                  .next_chunk().unwrap())
             .next_chunk().unwrap())
         .collect();
-    let max_sx = data.iter()
-        .map(|[[sx, _], _]| sx)
-        .max().unwrap();
-    let threshold = if *max_sx < 100 { 10 } else { 2_000_000 };
     (part1(data.clone(), threshold), part2(data, threshold))
 }
 
@@ -127,4 +123,4 @@ Sensor at x=17, y=20: closest beacon is at x=21, y=22
 Sensor at x=16, y=7: closest beacon is at x=15, y=3
 Sensor at x=14, y=3: closest beacon is at x=15, y=3
 Sensor at x=20, y=1: closest beacon is at x=15, y=3
-");
+", 10);
