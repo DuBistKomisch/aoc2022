@@ -84,15 +84,15 @@ fn d22(input: &str, size: i32) -> (i32, i32) {
         if point_to_face.contains_key(&point) {
             continue;
         }
-        let spin = modulo(from - FACES[face as usize].iter().position(|&adj| adj == prev).unwrap() as i32, 4);
+        let spin = (from - FACES[face as usize].iter().position(|&adj| adj == prev).unwrap() as i32).rem_euclid(4);
         point_to_face.insert(point, face);
         face_to_point.insert(face, point);
         face_to_spin.insert(face, spin);
         for dir in 0..4 {
             queue.push_back((
-                FACES[face as usize][modulo(dir - spin, 4) as usize],
+                FACES[face as usize][(dir - spin).rem_euclid(4) as usize],
                 face,
-                modulo(dir + 2, 4),
+                (dir + 2).rem_euclid(4),
                 point + DIRECTIONS[dir as usize]
             ));
         }
@@ -121,8 +121,8 @@ fn d22(input: &str, size: i32) -> (i32, i32) {
 
     let (pos2, dir2) = run(start.clone(), &steps, &turns, &tiles, |next, pos, dir, next_dir| {
         let prev = point_to_face[&Point { x: pos.x / size, y: pos.y / size }];
-        let face = FACES[prev as usize][modulo(dir - face_to_spin[&prev], 4) as usize];
-        let spin = modulo(FACES[face as usize].iter().position(|&adj| adj == prev).unwrap() as i32 + face_to_spin[&face], 4);
+        let face = FACES[prev as usize][(dir - face_to_spin[&prev]).rem_euclid(4) as usize];
+        let spin = (FACES[face as usize].iter().position(|&adj| adj == prev).unwrap() as i32 + face_to_spin[&face]).rem_euclid(4);
         let to = face_to_point[&face];
         let offset = match dir {
             0 => pos.y - pos.y / size * size,
@@ -145,7 +145,7 @@ fn d22(input: &str, size: i32) -> (i32, i32) {
             3 => to.y * size,
             _ => unreachable!()
         };
-        *next_dir = modulo(spin + 2, 4);
+        *next_dir = (spin + 2).rem_euclid(4);
     });
 
     (password(pos1, dir1), password(pos2, dir2))
@@ -180,21 +180,13 @@ where
             }
         }
         let Some(turn): Option<i32> = turns.next() else { break; };
-        dir = modulo(dir + turn, 4);
+        dir = (dir + turn).rem_euclid(4);
     }
     (pos, dir)
 }
 
 fn password(point: Point, direction: i32) -> i32 {
     (point.y + 1) * 1000 + (point.x + 1) * 4 + direction
-}
-
-fn modulo(a: i32, b: i32) -> i32 {
-    let mut rem = a % b;
-    if rem < 0 {
-        rem += b;
-    }
-    rem
 }
 
 sample!(d22, 6032, 5031, "        ...#
