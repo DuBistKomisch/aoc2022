@@ -68,8 +68,8 @@ fn d21(input: &str) -> (u64, u64) {
         } else {
             let [a, op, b] = right.split_whitespace().next_chunk().unwrap();
             let op = Op::parse(op);
-            index.entry(a).or_insert_with(|| vec![]).push(left);
-            index.entry(b).or_insert_with(|| vec![]).push(left);
+            index.entry(a).or_insert_with(Vec::new).push(left);
+            index.entry(b).or_insert_with(Vec::new).push(left);
             formulas.insert(left, Formula { a, op, b });
         }
     }

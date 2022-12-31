@@ -21,7 +21,7 @@ fn d16(input: &str) -> (u32, u32) {
     }
     let targets: Vec<_> = flows.iter().filter_map(|(&valve, flow)| (*flow > 0).then_some(valve)).collect();
     let mut distances: HashMap<_, _> = targets.iter().map(|&valve| (valve, bfs_distances(valve, &edges))).collect();
-    distances.insert(&"AA", bfs_distances(&"AA", &edges));
+    distances.insert("AA", bfs_distances("AA", &edges));
     let mut part1 = 0;
     dfs_part1(&mut part1, &["AA"], 30, 0, &targets, &flows, &distances);
     let mut part2 = 0;

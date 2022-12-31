@@ -15,7 +15,7 @@ Run with input using e.g. `cargo run --bin d01 < input/d01` (BYO input files).
 - Practice Rust!
   - I'll come back and refactor as I learn more tricks.
 - Use only the standard library, no crates.
-  - Next time I might allow `itertools` for convenience though.
+  - Next time I might allow `itertools` and `regex` for convenience though.
   - Nightly is used mostly for the new const generics chunk methods which make input parsing a lot more readable.
 - Solve the problems generically, don't abuse my particular input.
   - The problems often (deliberately) don't exhaustively cover every edge case or fully specify the input format, so I just make my best guess.
@@ -30,3 +30,4 @@ Non-goals:
   - I'll try of course, but I'm happy with something which works.
   - For example, day 19 takes 14 minutes to run, and optimising it any more isn't interesting.
   - I won't go back to change my strategy afterwards, only refactor the existing solution.
+- Handle errors, just panic if something goes wrong.

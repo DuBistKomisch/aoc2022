@@ -142,7 +142,7 @@ fn d17(input: &str) -> (i32, i64) {
 }
 
 fn play(solid: &HashSet<Point>, position: &mut Point,
-        piece: &Vec<Point>, jet: &Point) -> bool {
+        piece: &[Point], jet: &Point) -> bool {
     let blocked = piece.iter().any(|part| {
         let new = *position + *jet + *part;
         new.x < 0 || new.x > 6 || solid.contains(&new)
@@ -162,7 +162,7 @@ fn play(solid: &HashSet<Point>, position: &mut Point,
 }
 
 fn settle(solid: &mut HashSet<Point>, position: Point,
-          piece: &Vec<Point>, mut height: i32) -> i32 {
+          piece: &[Point], mut height: i32) -> i32 {
     for part in piece.iter() {
         let new = position + *part;
         if new.y + 1 > height {

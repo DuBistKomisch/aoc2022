@@ -109,7 +109,7 @@ fn d22(input: &str, size: i32) -> (i32, i32) {
         })
         .collect();
 
-    let (pos1, dir1) = run(start.clone(), &steps, &turns, &tiles, |next, pos, dir, _| {
+    let (pos1, dir1) = run(start, &steps, &turns, &tiles, |next, pos, dir, _| {
         match dir {
             0 => next.x = tiles.keys().filter_map(|Point { x, y }| (*y == pos.y).then_some(*x)).min().unwrap(),
             1 => next.y = tiles.keys().filter_map(|Point { x, y }| (*x == pos.x).then_some(*y)).min().unwrap(),
@@ -119,7 +119,7 @@ fn d22(input: &str, size: i32) -> (i32, i32) {
         }
     });
 
-    let (pos2, dir2) = run(start.clone(), &steps, &turns, &tiles, |next, pos, dir, next_dir| {
+    let (pos2, dir2) = run(start, &steps, &turns, &tiles, |next, pos, dir, next_dir| {
         let prev = point_to_face[&Point { x: pos.x / size, y: pos.y / size }];
         let face = FACES[prev as usize][(dir - face_to_spin[&prev]).rem_euclid(4) as usize];
         let spin = (FACES[face as usize].iter().position(|&adj| adj == prev).unwrap() as i32 + face_to_spin[&face]).rem_euclid(4);
@@ -151,7 +151,7 @@ fn d22(input: &str, size: i32) -> (i32, i32) {
     (password(pos1, dir1), password(pos2, dir2))
 }
 
-fn run<F>(mut pos: Point, steps: &Vec<u32>, turns: &Vec<i32>, tiles: &HashMap<Point, Tile>, wrap: F) -> (Point, i32)
+fn run<F>(mut pos: Point, steps: &[u32], turns: &[i32], tiles: &HashMap<Point, Tile>, wrap: F) -> (Point, i32)
 where
     F: Fn(&mut Point, &Point, i32, &mut i32)
 {

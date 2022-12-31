@@ -82,7 +82,7 @@ fn run(elves: &mut HashSet<Point>, proposal: i32) -> usize {
     let mut elf_to_move = HashMap::new();
     let mut move_to_elf = HashMap::new();
     'elf: for elf in elves.iter() {
-        if (0..DIRECTIONS.len()).any(|dir| elves.contains(&(*elf + DIRECTIONS[dir as usize]))) {
+        if (0..DIRECTIONS.len()).any(|dir| elves.contains(&(*elf + DIRECTIONS[dir]))) {
             for check in 0..PROPOSALS.len() {
                 let dir = PROPOSALS[(proposal + check as i32).rem_euclid(PROPOSALS.len() as i32) as usize];
                 if [-1, 0, 1].iter().any(|angle| {

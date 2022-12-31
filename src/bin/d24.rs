@@ -54,11 +54,11 @@ fn d24(input: &str) -> (i32, i32) {
             }
         }
     }
-    let width = input.lines().nth(0).unwrap().chars().count() as i32 - 2;
+    let width = input.lines().next().unwrap().chars().count() as i32 - 2;
     let height = input.lines().count() as i32 - 2;
     let start = Point {
         x: input.lines()
-            .nth(0).unwrap().chars()
+            .next().unwrap().chars()
             .position(|c| c == '.').unwrap() as i32 - 1,
         y: -1
     };
@@ -77,7 +77,7 @@ fn d24(input: &str) -> (i32, i32) {
 fn travel(blizzards: &mut Vec<(Point, i32)>, from: &Point, to: &Point, width: i32, height: i32) -> i32 {
     let mut minutes = 0;
     let mut positions = HashSet::new();
-    positions.insert(from.clone());
+    positions.insert(*from);
     while !positions.contains(to) {
         step(blizzards, width, height);
         let blizzard_positions: HashSet<_> = blizzards.iter()
@@ -107,8 +107,8 @@ fn travel(blizzards: &mut Vec<(Point, i32)>, from: &Point, to: &Point, width: i3
 }
 
 fn step(blizzards: &mut Vec<(Point, i32)>, width: i32, height: i32) {
-    *blizzards = blizzards.into_iter()
-        .map(|&mut (point, dir)| {
+    *blizzards = blizzards.iter()
+        .map(|&(point, dir)| {
             let mut next = point + DIRECTIONS[dir as usize];
             if next.x < 0 {
                 next.x = width - 1;

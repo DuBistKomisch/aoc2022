@@ -4,7 +4,7 @@ main!(d25, "Full of Hot Air");
 
 fn d25(input: &str) -> (String, i64) {
     let total = input.lines()
-        .map(|fuel| snafu2dec(fuel))
+        .map(snafu2dec)
         .sum();
     (dec2snafu(total), 0)
 }
